@@ -1,0 +1,18 @@
+# See the OWNERS docs at https://go.k8s.io/owners
+
+filters:
+  ".*":
+    reviewers:
+      - son-vyas
+      - arxcruz
+      - kopecmartin
+      - lpiwowar
+      - rlandy
+      - frenzyfriday
+    approvers:
+      - son-vyas
+      - arxcruz
+      - kopecmartin
+      - lpiwowar
+      - rlandy
+      - frenzyfriday
