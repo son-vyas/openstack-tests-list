@@ -1,0 +1,41 @@
+name: Trigger CI on PR Comment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  recheck:
+    if: ${{ github.event.issue.pull_request }}  # Only run if the comment is on a PR
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check if the comment is 'recheck'
+      if: contains(github.event.comment.body, 'recheck')
+      run: echo "Comment is recheck"
+
+    - name: Trigger CI workflow
+      if: contains(github.event.comment.body, 'recheck')
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const { owner, repo } = context.repo;
+          const pull_number = context.issue.number;
+
+          const { data: pullRequest } = await github.pulls.get({
+            owner,
+            repo,
+            pull_number
+          });
+
+          const ref = pullRequest.head.ref;
+
+          await github.actions.createWorkflowDispatch({
+            owner,
+            repo,
+            workflow_id: 'ci.yaml',
+            ref,
+            inputs: {}
+          });
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
