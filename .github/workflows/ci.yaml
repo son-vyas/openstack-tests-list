@@ -33,10 +33,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          repository: openstack-k8s-operators/openstack-k8s-operators-ci
-          path: ./openstack-k8s-operators-ci
+          python-version: '3.12'
 
       - name: Run pre-commit
         run: |
