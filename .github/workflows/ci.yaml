@@ -33,7 +33,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          repository: openstack-k8s-operators/openstack-k8s-operators-ci
+          path: ./openstack-k8s-operators-ci
 
       - name: Run pre-commit
         run: |
