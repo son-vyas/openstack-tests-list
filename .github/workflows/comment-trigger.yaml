@@ -9,15 +9,21 @@ jobs:
     if: github.event.issue.pull_request != null && contains(github.event.comment.body, '/recheck')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout pull request branch
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Trigger CI Workflow
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: workflows } = await github.actions.listRepoWorkflows({
+            const { Octokit } = require("@octokit/rest");
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
+            const { data: workflows } = await octokit.actions.listRepoWorkflows({
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
@@ -27,7 +33,7 @@ jobs:
               throw new Error('CI workflow not found');
             }
 
-            await github.actions.createWorkflowDispatch({
+            await octokit.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: workflow.id,
