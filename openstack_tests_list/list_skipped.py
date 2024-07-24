@@ -1,4 +1,5 @@
 import yaml
+import os
 
 
 def load_yaml(file_path):
@@ -22,3 +23,13 @@ def get_skipped_tests(file_path):
             "jobs": jobs,
         }
     return skipped_tests
+
+
+class ListSkippedYaml:
+    def __init__(self, file_path=None, base_dir="openstack_tests_list/default"):
+        self.file = (
+            file_path if file_path else os.path.join(base_dir, "list_skipped.yaml")
+        )
+
+    def parse(self):
+        return get_skipped_tests(self.file)

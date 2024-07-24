@@ -1,7 +1,7 @@
 import click
-from openstack_tests_list.list_allowed import get_allowed_tests
-from openstack_tests_list.list_skipped import get_skipped_tests
-from openstack_tests_list.validate import Validate
+from openstack_tests_list.list_allowed import ListAllowedYaml
+from openstack_tests_list.list_skipped import ListSkippedYaml
+from openstack_tests_list.validate import ValidateYaml
 
 
 @click.group()
@@ -12,23 +12,21 @@ def cli():
 @cli.command()
 @click.option("--file", required=True, type=click.Path(exists=True))
 def validate(file):
-    validator = Validate(None, None)
-    # Create a mock object to pass as args
-    args = type("obj", (object,), {"file": file})
-    validator.take_action(args)
+    validator = ValidateYaml(file)
+    validator.take_action()
 
 
 @cli.command()
-@click.option("--file", required=True, type=click.Path(exists=True))
-def list_allowed(file):
-    allowed_tests = get_allowed_tests(file)
+def list_allowed():
+    allowlist = ListAllowedYaml()
+    allowed_tests = allowlist.parse()
     click.echo(allowed_tests)
 
 
 @cli.command()
-@click.option("--file", required=True, type=click.Path(exists=True))
-def list_skipped(file):
-    skipped_tests = get_skipped_tests(file)
+def list_skipped():
+    skiplist = ListSkippedYaml()
+    skipped_tests = skiplist.parse()
     click.echo(skipped_tests)
 
 
