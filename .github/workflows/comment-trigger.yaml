@@ -1,4 +1,4 @@
-name: Trigger CI on PR Comment
+name: Comment Trigger
 
 on:
   issue_comment:
@@ -6,36 +6,30 @@ on:
 
 jobs:
   recheck:
-    if: ${{ github.event.issue.pull_request }}  # Only run if the comment is on a PR
+    if: github.event.issue.pull_request != null && contains(github.event.comment.body, '/recheck')
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check if the comment is 'recheck'
-        if: contains(github.event.comment.body, 'recheck')
-        run: echo "Comment is recheck"
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Trigger CI workflow
-        if: contains(github.event.comment.body, 'recheck')
+      - name: Trigger CI Workflow
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { owner, repo } = context.repo;
-            const pull_number = context.issue.number;
-
-            const { data: pullRequest } = await github.pulls.get({
-              owner,
-              repo,
-              pull_number
+            const { data: workflows } = await github.actions.listRepoWorkflows({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
             });
 
-            const ref = pullRequest.head.ref;
+            const workflow = workflows.workflows.find(wf => wf.name === 'ci');
+            if (!workflow) {
+              throw new Error('CI workflow not found');
+            }
 
             await github.actions.createWorkflowDispatch({
-              owner,
-              repo,
-              workflow_id: 'ci.yaml',
-              ref,
-              inputs: {}
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: workflow.id,
+              ref: context.payload.issue.pull_request.head.ref,
             });
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
