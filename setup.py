@@ -10,7 +10,7 @@ setup(
     packages=find_packages(include=["openstack_tests_list", "openstack_tests_list.*"]),
     entry_points={
         "console_scripts": [
-            "tempest-skip=openstack_tests_list.main:main",
+            "openstack-tests-list-=openstack_tests_list.main:main",
         ],
         "openstack_tests_list.cm": [
             "validate=openstack_tests_list.validate:Validate",
@@ -21,12 +21,13 @@ setup(
         ],
     },
     install_requires=[
-        "cliff",
         "inquirer",
         "ruamel.yaml>=0.17.7",
         "tempest",
         "validators",
         "voluptuous",
+        "pyyaml",
+        "click",
     ],
     setup_requires=["pbr>=1.8"],
     pbr=True,
