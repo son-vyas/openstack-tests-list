@@ -1,7 +1,7 @@
 import click
-from openstack_tests_list.list_allowed import ListAllowedYaml
-from openstack_tests_list.list_skipped import ListSkippedYaml
-from openstack_tests_list.validate import ValidateYaml
+from .list_allowed import ListAllowedYaml
+from .list_skipped import ListSkippedYaml
+from .validate import ValidateYaml
 
 
 @click.group()
@@ -10,28 +10,38 @@ def cli():
 
 
 @cli.command()
-@click.option("--file", required=True, type=click.Path(exists=True))
+@click.option(
+    "--file", required=True, type=click.Path(exists=True), help="File to validate."
+)
 def validate(file):
     validator = ValidateYaml(file)
     validator.take_action()
 
 
 @cli.command()
-def list_allowed():
-    allowlist = ListAllowedYaml()
-    allowed_tests = allowlist.parse()
-    click.echo(allowed_tests)
+@click.option(
+    "--component", default=None, help="Specify the component name for allowed tests."
+)
+def list_allowed(component):
+    try:
+        allowlist = ListAllowedYaml(component=component)
+        allowed_tests = allowlist.parse()
+        click.echo(allowed_tests)
+    except Exception as e:
+        click.echo(f"Error processing allowed tests: {str(e)}")
 
 
 @cli.command()
-def list_skipped():
-    skiplist = ListSkippedYaml()
-    skipped_tests = skiplist.parse()
-    click.echo(skipped_tests)
-
-
-def main():
-    cli()
+@click.option(
+    "--component", default=None, help="Specify the component name for skipped tests."
+)
+def list_skipped(component):
+    try:
+        skiplist = ListSkippedYaml(component=component)
+        skipped_tests = skiplist.parse()
+        click.echo(skipped_tests)
+    except Exception as e:
+        click.echo(f"Error processing skipped tests: {str(e)}")
 
 
 if __name__ == "__main__":

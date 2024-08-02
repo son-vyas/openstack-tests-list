@@ -10,7 +10,7 @@ setup(
     packages=find_packages(include=["openstack_tests_list", "openstack_tests_list.*"]),
     entry_points={
         "console_scripts": [
-            "openstack-tests-list-=openstack_tests_list.main:main",
+            "openstack-tests-list-=openstack_tests_list.main:cli",
         ],
         "openstack_tests_list.cm": [
             "validate=openstack_tests_list.validate:Validate",
