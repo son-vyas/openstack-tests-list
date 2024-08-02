@@ -3,16 +3,18 @@
 filters:
   ".*":
     reviewers:
-      - son-vyas
-      - arxcruz
+      - frenzyfriday
       - kopecmartin
       - lpiwowar
+      - pojadhav
       - rlandy
-      - frenzyfriday
+      - sdatko
+      - son-vyas
     approvers:
-      - son-vyas
-      - arxcruz
+      - frenzyfriday
       - kopecmartin
       - lpiwowar
+      - pojadhav
       - rlandy
-      - frenzyfriday
+      - sdatko
+      - son-vyas
